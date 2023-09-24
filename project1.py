@@ -83,6 +83,8 @@ def get_playlist_info(channel_id):
                       'VideoCount':item['contentDetails']['itemCount']}
                 All_data.append(data)
             next_page_token = response.get('nextPageToken')
+            if  next_page_token is None:
+                break
     return All_data
 
 #get video ids
