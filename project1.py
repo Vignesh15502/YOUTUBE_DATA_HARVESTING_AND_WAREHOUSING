@@ -69,7 +69,7 @@ def get_playlist_info(channel_id):
 
             request = youtube.playlists().list(
                 part="snippet,contentDetails",
-                channelId="UCmXkiw-1x9ZhNOPz0X73tTA",
+                channelId=channel_id,
                 maxResults=25
                 )
             response = request.execute()
