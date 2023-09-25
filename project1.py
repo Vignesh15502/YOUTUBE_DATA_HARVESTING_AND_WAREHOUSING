@@ -46,47 +46,32 @@ def get_channel_info(channel_id):
 
 #get playlist ids
 def get_playlist_info(channel_id):
-    request = youtube.playlists().list(
-    part="snippet,contentDetails",
-    channelId=channel_id,
-    maxResults=50
-    )
-    response = request.execute()
-    All_data=[]
-    for item in response['items']: 
-        data={'PlaylistId':item['id'],
-                'Title':item['snippet']['title'],
-                'ChannelId':item['snippet']['channelId'],
-                'ChannelName':item['snippet']['channelTitle'],
-                'PublishedAt':item['snippet']['publishedAt'],
-                'VideoCount':item['contentDetails']['itemCount']
-                }
-        All_data.append(data)
+    All_data = []
+    next_page_token = None
+    next_page = True
+    while next_page:
 
+        request = youtube.playlists().list(
+            part="snippet,contentDetails",
+            channelId=channel_id,
+            maxResults=50,
+            pageToken=next_page_token
+            )
+        response = request.execute()
+
+        for item in response['items']: 
+            data={'PlaylistId':item['id'],
+                    'Title':item['snippet']['title'],
+                    'ChannelId':item['snippet']['channelId'],
+                    'ChannelName':item['snippet']['channelTitle'],
+                    'PublishedAt':item['snippet']['publishedAt'],
+                    'VideoCount':item['contentDetails']['itemCount']}
+            All_data.append(data)
         next_page_token = response.get('nextPageToken')
-    
-        while next_page_token is not None:
-
-            request = youtube.playlists().list(
-                part="snippet,contentDetails",
-                channelId=channel_id,
-                maxResults=50
-                )
-            response = request.execute()
-
-            for item in response['items']: 
-                data={'PlaylistId':item['id'],
-                      'Title':item['snippet']['title'],
-                      'ChannelId':item['snippet']['channelId'],
-                      'ChannelName':item['snippet']['channelTitle'],
-                      'PublishedAt':item['snippet']['publishedAt'],
-                      'VideoCount':item['contentDetails']['itemCount']}
-                All_data.append(data)
-            next_page_token = response.get('nextPageToken')
-            if  next_page_token is None:
-                break
+        if next_page_token is None:
+            next_page=False
     return All_data
-
+    
 #get video ids
 def get_channel_videos(channel_id):
     video_ids = []
